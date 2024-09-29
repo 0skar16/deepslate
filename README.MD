@@ -25,7 +25,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 
 ## Comparison?
 
-| Scenario        | Deepslate (v0.2.0, UNCOMPRESSED) | Polar (v1, zstd) | Polar (v1, uncompressed) | TNT (v1) | Anvil |
+| Scenario        | Deepslate (v0.2.0, LZ4) | Polar (v1, zstd) | Polar (v1, uncompressed) | TNT (v1) | Anvil |
 |-----------------|----------------------------------|------------------|--------------------------|----------|-------|
 | 1.19.4 Region   | 6.5mb (WOW)                      | 5.9mb            | 26.1mb                   | 115.9mb  | 9.7mb |
 
