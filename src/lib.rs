@@ -351,6 +351,7 @@ pub enum Biome {
     WoodedBadlands,
     MangroveSwamp,
     DeepDark,
+    Custom(String),
     Unknown,
 }
 #[cfg(feature = "binary")]
