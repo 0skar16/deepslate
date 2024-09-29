@@ -1,7 +1,10 @@
-use std::{io::{self, Cursor, Read, Seek}, ops::Range};
-use byteorder::{LittleEndian, ReadBytesExt};
-use anyhow::{anyhow, bail, Result};
 use crate::{Chunk, ChunkEntry, DeepslateWorld, CURRENT_VERSION, MAGIC_NUMBER};
+use anyhow::{anyhow, bail, Result};
+use byteorder::{LittleEndian, ReadBytesExt};
+use std::{
+    io::{self, Cursor, Read, Seek},
+    ops::Range,
+};
 
 pub struct DeepslateReader<R> {
     world: DeepslateWorld,
@@ -35,9 +38,13 @@ impl<'a, R: Read + Seek> DeepslateReader<R> {
     pub fn chunk(&'a mut self, chunk_id: usize) -> Result<ChunkReader<'a, R>> {
         let mut c = self.data_start;
         for chunk in &(&self.world.chunks)[0..chunk_id] {
-            c+=chunk.len as u64;
+            c += chunk.len as u64;
         }
-        let chunk = self.world.chunks.get(chunk_id).ok_or_else(|| anyhow!("Couldn't get entry!"))?;
+        let chunk = self
+            .world
+            .chunks
+            .get(chunk_id)
+            .ok_or_else(|| anyhow!("Couldn't get entry!"))?;
         Ok(ChunkReader::new(&mut self.reader, c, *chunk))
     }
     pub fn chunk_by_pos(&'a mut self, pos: (isize, isize)) -> Result<ChunkReader<'a, R>> {
@@ -66,13 +73,18 @@ pub struct ChunkReader<'a, R> {
 }
 impl<'a, R: Read + Seek> ChunkReader<'a, R> {
     fn new(reader: &'a mut R, start: u64, entry: ChunkEntry) -> Self {
-        Self { reader, data_pos_start: start, entry }
+        Self {
+            reader,
+            data_pos_start: start,
+            entry,
+        }
     }
     pub fn read(self, range: Option<Range<u64>>) -> Result<Vec<u8>> {
         let range = range.clone().unwrap_or(0..self.entry.len as u64);
-        let rl = range.end-range.start;
+        let rl = range.end - range.start;
         let mut buf = vec![0u8; rl as usize];
-        self.reader.seek(io::SeekFrom::Start(self.data_pos_start + range.start))?;
+        self.reader
+            .seek(io::SeekFrom::Start(self.data_pos_start + range.start))?;
         self.reader.read_exact(&mut buf)?;
         match self.entry.compression {
             crate::ChunkCompression::None => Ok(buf),
@@ -81,7 +93,7 @@ impl<'a, R: Read + Seek> ChunkReader<'a, R> {
                 let mut dec = lz4::Decoder::new(Cursor::new(buf))?;
                 dec.read_exact(&mut uncompressed_buf)?;
                 Ok(uncompressed_buf)
-            },
+            }
             crate::ChunkCompression::Zstd => Ok(zstd::decode_all(Cursor::new(buf))?),
         }
     }

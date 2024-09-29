@@ -1,7 +1,7 @@
 #![feature(iter_array_chunks)]
 use std::collections::HashMap;
 
-use bitcode::{Encode, Decode};
+use bitcode::{Decode, Encode};
 
 pub mod reader;
 pub mod writer;
@@ -17,7 +17,7 @@ pub struct DeepslateWorld {
 }
 
 #[derive(Clone, PartialEq, Debug, Encode, Decode, Default, Copy)]
-pub struct ChunkEntry {    
+pub struct ChunkEntry {
     pub pos: (isize, isize),
     pub len: usize,
     pub original_len: usize,
@@ -83,19 +83,32 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
             self.var2.reserve(additional);
             let data: Vec<u8> = if t.pallette.len() <= 4 {
                 self.var2.encode(&0);
-                t.block_data.iter().array_chunks::<4>().map(|[b1, b2, b3, b4]| (b4 << 6 | b3 << 4 | b2 << 2 | b1) as u8).collect()
-            }else if t.pallette.len() <= 16 {
+                t.block_data
+                    .iter()
+                    .array_chunks::<4>()
+                    .map(|[b1, b2, b3, b4]| (b4 << 6 | b3 << 4 | b2 << 2 | b1) as u8)
+                    .collect()
+            } else if t.pallette.len() <= 16 {
                 self.var2.encode(&1);
-                t.block_data.iter().array_chunks::<2>().map(|[b1, b2]| (b2 << 4 | b1) as u8).collect()
+                t.block_data
+                    .iter()
+                    .array_chunks::<2>()
+                    .map(|[b1, b2]| (b2 << 4 | b1) as u8)
+                    .collect()
             } else if t.pallette.len() <= u8::MAX as usize + 1 {
                 self.var2.encode(&2);
                 t.block_data.iter().map(|b| *b as u8).collect()
             } else {
                 self.var2.encode(&3);
-                t.block_data.iter().array_chunks::<2>().map(|[b1, b2]| {
-                    let [_, o3, o2, o1] = (((*b1) | (*b2) << 12) as u32).to_be_bytes();
-                    [o3, o2, o1]
-                }).flatten().collect()
+                t.block_data
+                    .iter()
+                    .array_chunks::<2>()
+                    .map(|[b1, b2]| {
+                        let [_, o3, o2, o1] = (((*b1) | (*b2) << 12) as u32).to_be_bytes();
+                        [o3, o2, o1]
+                    })
+                    .flatten()
+                    .collect()
             };
             self.data.reserve(additional);
             self.pallete.reserve(additional);
@@ -103,9 +116,7 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
             self.data.encode(&data);
             self.pallete.encode(&t.pallette);
         }
-
     }
-    
 }
 
 impl bitcode::__private::Buffer for SectionBlockStatesEncoder {
@@ -122,8 +133,7 @@ impl bitcode::__private::Buffer for SectionBlockStatesEncoder {
     }
 }
 
-impl<'de> bitcode::__private::Decode<'de> for SectionBlockStates
-{
+impl<'de> bitcode::__private::Decode<'de> for SectionBlockStates {
     type Decoder = SectionBlockStatesDecoder<'de>;
 }
 
@@ -155,45 +165,79 @@ impl<'__de> bitcode::__private::View<'__de> for SectionBlockStatesDecoder<'__de>
         Ok(())
     }
 }
-impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates> for SectionBlockStatesDecoder<'__de> {
+impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
+    for SectionBlockStatesDecoder<'__de>
+{
     fn decode_in_place(&mut self, out: &mut std::mem::MaybeUninit<SectionBlockStates>) {
         let (block_data, pallette) = match self.var1.decode() {
             0u8 => {
                 let palette = self.unanymous_pallete.decode();
-                (vec![0; 16*16*16], vec![palette])
+                (vec![0; 16 * 16 * 16], vec![palette])
             }
             1u8 => match self.var2.decode() {
                 0u8 => {
                     let quarters_data: Vec<u8> = self.data.decode();
                     let palette = self.palette.decode();
-                    (quarters_data.into_iter().map(|q| [q as u64 & 0x3, (q as u64 >> 2) & 0x3, (q as u64 >> 4) & 0x3, (q as u64 >> 6) & 0x3]).flatten().collect(), palette)
+                    (
+                        quarters_data
+                            .into_iter()
+                            .map(|q| {
+                                [
+                                    q as u64 & 0x3,
+                                    (q as u64 >> 2) & 0x3,
+                                    (q as u64 >> 4) & 0x3,
+                                    (q as u64 >> 6) & 0x3,
+                                ]
+                            })
+                            .flatten()
+                            .collect(),
+                        palette,
+                    )
                 }
                 1u8 => {
                     let halves_data: Vec<u8> = self.data.decode();
-    
+
                     let palette = self.palette.decode();
-                    (halves_data.into_iter().map(|h| [h as u64 & 0xf, (h as u64 >> 4) & 0xf]).flatten().collect(), palette)
+                    (
+                        halves_data
+                            .into_iter()
+                            .map(|h| [h as u64 & 0xf, (h as u64 >> 4) & 0xf])
+                            .flatten()
+                            .collect(),
+                        palette,
+                    )
                 }
                 2u8 => {
                     let data: Vec<u8> = self.data.decode();
-    
+
                     let palette = self.palette.decode();
                     (data.into_iter().map(|b| b as u64).collect(), palette)
                 }
                 3u8 => {
                     let twelves_data: Vec<u8> = self.data.decode();
-    
+
                     let palette = self.palette.decode();
-                    (twelves_data.into_iter().array_chunks::<3>().map(|[b3, b2, b1]| {
-                        let t = u32::from_be_bytes([0, b3, b2, b1]);
-                        [t as u64 & 0xfff, (t as u64 >> 12) & 0xfff]
-                    }).flatten().collect(), palette)
-                },
-                _ => unsafe { std::hint::unreachable_unchecked() }
-            }
-            _ => unsafe { std::hint::unreachable_unchecked() }
+                    (
+                        twelves_data
+                            .into_iter()
+                            .array_chunks::<3>()
+                            .map(|[b3, b2, b1]| {
+                                let t = u32::from_be_bytes([0, b3, b2, b1]);
+                                [t as u64 & 0xfff, (t as u64 >> 12) & 0xfff]
+                            })
+                            .flatten()
+                            .collect(),
+                        palette,
+                    )
+                }
+                _ => unsafe { std::hint::unreachable_unchecked() },
+            },
+            _ => unsafe { std::hint::unreachable_unchecked() },
         };
-        out.write(SectionBlockStates { pallette, block_data });
+        out.write(SectionBlockStates {
+            pallette,
+            block_data,
+        });
     }
 }
 
@@ -379,7 +423,9 @@ impl From<fastanvil::biome::Biome> for Biome {
             fastanvil::biome::Biome::BadlandsPlateau => Biome::BadlandsPlateau,
             fastanvil::biome::Biome::ModifiedBadlandsPlateau => Biome::ModifiedBadlandsPlateau,
             fastanvil::biome::Biome::WoodedBadlandsPlateau => Biome::WoodedBadlandsPlateau,
-            fastanvil::biome::Biome::ModifiedWoodedBadlandsPlateau => Biome::ModifiedWoodedBadlandsPlateau,
+            fastanvil::biome::Biome::ModifiedWoodedBadlandsPlateau => {
+                Biome::ModifiedWoodedBadlandsPlateau
+            }
             fastanvil::biome::Biome::ErodedBadlands => Biome::ErodedBadlands,
             fastanvil::biome::Biome::Nether => Biome::Nether,
             fastanvil::biome::Biome::TheEnd => Biome::TheEnd,

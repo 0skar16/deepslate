@@ -1,9 +1,11 @@
-use std::{collections::BTreeSet, io::{Seek, Write}};
+use std::{
+    collections::BTreeSet,
+    io::{Seek, Write},
+};
 
-use byteorder::{LittleEndian, WriteBytesExt};
 use crate::{Chunk, ChunkCompression, ChunkEntry, DeepslateWorld, CHUNK_COMPRESSION_THRESHOLD};
 use anyhow::{bail, Result};
-
+use byteorder::{LittleEndian, WriteBytesExt};
 
 pub struct DeepslateWriter<W> {
     writer: W,
@@ -29,8 +31,7 @@ impl<W: Seek + Write> DeepslateWriter<W> {
             chunks: vec![],
         })
     }
-    
-    
+
     pub fn insert_chunk(&mut self, pos: (isize, isize), chunk: Chunk) -> Result<()> {
         if self.written_chunks.contains(&pos) {
             bail!("Chunk {:?} has already been written", pos);
@@ -43,14 +44,22 @@ impl<W: Seek + Write> DeepslateWriter<W> {
             let mut enc = zstd::Encoder::new(vec![], 3)?;
             enc.write_all(&chunk_buf)?;
             enc.finish()?
-        }else{
+        } else {
             chunk_buf
         };
-        self.chunks.push(ChunkEntry { pos, len: chunk_buf.len(), original_len: len, compression: if len > CHUNK_COMPRESSION_THRESHOLD { ChunkCompression::Zstd } else {ChunkCompression::None} });
-        
+        self.chunks.push(ChunkEntry {
+            pos,
+            len: chunk_buf.len(),
+            original_len: len,
+            compression: if len > CHUNK_COMPRESSION_THRESHOLD {
+                ChunkCompression::Zstd
+            } else {
+                ChunkCompression::None
+            },
+        });
+
         self.chunks_len += chunk_buf.len();
         self.writer.write_all(&chunk_buf)?;
-
 
         Ok(())
     }
@@ -64,8 +73,10 @@ impl<W: Seek + Write> DeepslateWriter<W> {
 
         self.writer.write_all(&world_buf)?;
         self.writer.seek(std::io::SeekFrom::Start(8 + 2))?;
-        self.writer.write_u64::<LittleEndian>(self.chunks_len as u64)?;
-        self.writer.write_u32::<LittleEndian>(world_buf.len() as u32)?;
+        self.writer
+            .write_u64::<LittleEndian>(self.chunks_len as u64)?;
+        self.writer
+            .write_u32::<LittleEndian>(world_buf.len() as u32)?;
         Ok(())
     }
     pub fn inner(&mut self) -> &mut W {
