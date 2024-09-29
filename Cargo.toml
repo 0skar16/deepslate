@@ -13,11 +13,11 @@ clap = { version = "4", features = ["derive"], optional = true }
 fastanvil = { version = "0.31", optional = true }
 fastnbt = {version = "2.5", optional = true }
 lz4 = "1.28"
-rayon = "1"
+rayon = { version = "1", optional = true }
 zstd = "0.13"
 
 [features]
-binary = ["fastanvil", "clap", "fastnbt"]
+binary = ["fastanvil", "clap", "fastnbt", "rayon"]
 default = ["binary"]
 
 [[bin]]
