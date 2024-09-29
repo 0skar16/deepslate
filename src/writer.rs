@@ -40,15 +40,13 @@ impl<W: Seek + Write> DeepslateWriter<W> {
         let len = chunk_buf.len();
         self.written_chunks.insert(pos);
         let chunk_buf = if chunk_buf.len() > CHUNK_COMPRESSION_THRESHOLD {
-            let mut enc = lz4::EncoderBuilder::new().level(4).build(vec![])?;
+            let mut enc = zstd::Encoder::new(vec![], 3)?;
             enc.write_all(&chunk_buf)?;
-            let (buf, res) = enc.finish();
-            res?;
-            buf
+            enc.finish()?
         }else{
             chunk_buf
         };
-        self.chunks.push(ChunkEntry { pos, len: chunk_buf.len(), original_len: len, compression: if len > CHUNK_COMPRESSION_THRESHOLD { ChunkCompression::LZ4 } else {ChunkCompression::None} });
+        self.chunks.push(ChunkEntry { pos, len: chunk_buf.len(), original_len: len, compression: if len > CHUNK_COMPRESSION_THRESHOLD { ChunkCompression::Zstd } else {ChunkCompression::None} });
         
         self.chunks_len += chunk_buf.len();
         self.writer.write_all(&chunk_buf)?;

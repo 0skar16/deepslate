@@ -29,6 +29,7 @@ pub enum ChunkCompression {
     #[default]
     None,
     LZ4,
+    Zstd,
 }
 
 #[derive(Debug, Encode, Decode)]

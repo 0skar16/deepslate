@@ -82,6 +82,7 @@ impl<'a, R: Read + Seek> ChunkReader<'a, R> {
                 dec.read_exact(&mut uncompressed_buf)?;
                 Ok(uncompressed_buf)
             },
+            crate::ChunkCompression::Zstd => Ok(zstd::decode_all(Cursor::new(buf))?),
         }
     }
     pub fn decode(self) -> Result<Chunk> {
