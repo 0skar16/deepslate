@@ -44,13 +44,13 @@ pub struct Chunk {
 pub struct Section {
     pub y: i8,
     pub block_states: SectionBlockStates,
-    pub biome_pallete: Vec<Biome>,
+    pub biome_palette: Vec<Biome>,
     pub block_light: Option<Vec<u8>>,
     pub sky_light: Option<Vec<u8>>,
 }
 #[derive(Debug)]
 pub struct SectionBlockStates {
-    pub pallette: Vec<String>,
+    pub palette: Vec<String>,
     pub block_data: Vec<u64>,
 }
 
@@ -71,31 +71,31 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
     fn encode(&mut self, t: &SectionBlockStates) {
         use bitcode::__private::Buffer as _;
         let additional = std::num::NonZeroUsize::MIN;
-        if t.pallette.len() == 1 {
+        if t.palette.len() == 1 {
             self.unanymous_pallete.reserve(additional);
 
             self.var1.encode(&0);
-            self.unanymous_pallete.encode(&t.pallette[0]);
-        } else if t.pallette.len() == 0 {
+            self.unanymous_pallete.encode(&t.palette[0]);
+        } else if t.palette.len() == 0 {
             panic!("palette needs to be longer than 0");
         } else {
             self.var1.encode(&1);
             self.var2.reserve(additional);
-            let data: Vec<u8> = if t.pallette.len() <= 4 {
+            let data: Vec<u8> = if t.palette.len() <= 4 {
                 self.var2.encode(&0);
                 t.block_data
                     .iter()
                     .array_chunks::<4>()
                     .map(|[b1, b2, b3, b4]| (b4 << 6 | b3 << 4 | b2 << 2 | b1) as u8)
                     .collect()
-            } else if t.pallette.len() <= 16 {
+            } else if t.palette.len() <= 16 {
                 self.var2.encode(&1);
                 t.block_data
                     .iter()
                     .array_chunks::<2>()
                     .map(|[b1, b2]| (b2 << 4 | b1) as u8)
                     .collect()
-            } else if t.pallette.len() <= u8::MAX as usize + 1 {
+            } else if t.palette.len() <= u8::MAX as usize + 1 {
                 self.var2.encode(&2);
                 t.block_data.iter().map(|b| *b as u8).collect()
             } else {
@@ -114,7 +114,7 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
             self.pallete.reserve(additional);
 
             self.data.encode(&data);
-            self.pallete.encode(&t.pallette);
+            self.pallete.encode(&t.palette);
         }
     }
 }
@@ -169,7 +169,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
     for SectionBlockStatesDecoder<'__de>
 {
     fn decode_in_place(&mut self, out: &mut std::mem::MaybeUninit<SectionBlockStates>) {
-        let (block_data, pallette) = match self.var1.decode() {
+        let (block_data, palette) = match self.var1.decode() {
             0u8 => {
                 let palette = self.unanymous_pallete.decode();
                 (vec![0; 16 * 16 * 16], vec![palette])
@@ -235,7 +235,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
             _ => unreachable!(),
         };
         out.write(SectionBlockStates {
-            pallette,
+            palette,
             block_data,
         });
     }
