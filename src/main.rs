@@ -97,23 +97,7 @@ pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Optio
         return None;
     };
     let block_data: Vec<u64> = block_data_iter.map(|b| b as u64).collect();
-    let block_data = if block_palette.len() == 1 {
-        SectionBlockStates::Unanymous(block_palette[0].clone())
-    }else {
-        SectionBlockStates::Varied {block_data: if block_palette.len() <= 4 {
-            deepslate::BlockData::Quarter(block_data.into_iter().array_chunks::<4>().map(|[b1, b2, b3, b4]| (b4 << 6 | b3 << 4 | b2 << 2 | b1) as u8).collect())
-        }else if block_palette.len() <= 16 {
-            deepslate::BlockData::Half(block_data.into_iter().array_chunks::<2>().map(|[b1, b2]| (b2 << 4 | b1) as u8).collect())
-        } else if block_palette.len() <= u8::MAX as usize + 1{
-            deepslate::BlockData::Byte(block_data.into_iter().map(|b| b as u8).collect())
-        } else if block_palette.len() <= u16::MAX as usize + 1 {
-            deepslate::BlockData::Short(block_data.into_iter().map(|b| b as u16).collect())
-        } else if block_palette.len() <= u32::MAX as usize + 1 {
-            deepslate::BlockData::Int(block_data.into_iter().map(|b| b as u32).collect())
-        } else {
-            deepslate::BlockData::Long(block_data.into_iter().map(|b| b as u64).collect())
-        }, pallette: block_palette }
-    };
+    let block_data = SectionBlockStates {block_data, pallette: block_palette};
     let biome_pallete = section.biomes.palette().into_iter().map(|biome| deepslate::Biome::from(*biome)).collect();
     Some(deepslate::Section { block_states: block_data, biome_pallete, block_light: None, sky_light: None, y: section.y })
 }
