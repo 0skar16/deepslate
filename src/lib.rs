@@ -140,7 +140,7 @@ impl<'de> bitcode::__private::Decode<'de> for SectionBlockStates {
 #[derive(Default)]
 pub struct SectionBlockStatesDecoder<'de> {
     var1: bitcode::__private::VariantDecoder<'de, 2usize, false>,
-    var2: bitcode::__private::VariantDecoder<'de, 6usize, false>,
+    var2: bitcode::__private::VariantDecoder<'de, 4usize, true>,
     unanymous_pallete: <String as bitcode::__private::Decode<'de>>::Decoder,
     palette: <Vec<String> as bitcode::__private::Decode<'de>>::Decoder,
     data: <Vec<u8> as bitcode::__private::Decode<'de>>::Decoder,
@@ -230,9 +230,9 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
                         palette,
                     )
                 }
-                _ => unsafe { std::hint::unreachable_unchecked() },
+                _ => unreachable!(),
             },
-            _ => unsafe { std::hint::unreachable_unchecked() },
+            _ => unreachable!(),
         };
         out.write(SectionBlockStates {
             pallette,
