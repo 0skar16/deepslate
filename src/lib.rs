@@ -58,8 +58,8 @@ pub struct SectionBlockStates {
 pub struct SectionBlockStatesEncoder {
     var1: bitcode::__private::VariantEncoder<2usize>,
     var2: bitcode::__private::VariantEncoder<4usize>,
-    pallete: <Vec<String> as bitcode::__private::Encode>::Encoder,
-    unanymous_pallete: <String as bitcode::__private::Encode>::Encoder,
+    palette: <Vec<String> as bitcode::__private::Encode>::Encoder,
+    unanymous_palette: <String as bitcode::__private::Encode>::Encoder,
     data: <Vec<u8> as bitcode::__private::Encode>::Encoder,
 }
 
@@ -72,10 +72,10 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
         use bitcode::__private::Buffer as _;
         let additional = std::num::NonZeroUsize::MIN;
         if t.palette.len() == 1 {
-            self.unanymous_pallete.reserve(additional);
+            self.unanymous_palette.reserve(additional);
 
             self.var1.encode(&0);
-            self.unanymous_pallete.encode(&t.palette[0]);
+            self.unanymous_palette.encode(&t.palette[0]);
         } else if t.palette.len() == 0 {
             panic!("palette needs to be longer than 0");
         } else {
@@ -111,10 +111,10 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
                     .collect()
             };
             self.data.reserve(additional);
-            self.pallete.reserve(additional);
+            self.palette.reserve(additional);
 
             self.data.encode(&data);
-            self.pallete.encode(&t.palette);
+            self.palette.encode(&t.palette);
         }
     }
 }
@@ -123,9 +123,9 @@ impl bitcode::__private::Buffer for SectionBlockStatesEncoder {
     fn collect_into(&mut self, out: &mut Vec<u8>) {
         self.var1.collect_into(out);
         self.var2.collect_into(out);
-        self.unanymous_pallete.collect_into(out);
+        self.unanymous_palette.collect_into(out);
         self.data.collect_into(out);
-        self.pallete.collect_into(out);
+        self.palette.collect_into(out);
     }
 
     fn reserve(&mut self, additional: std::num::NonZeroUsize) {
@@ -141,7 +141,7 @@ impl<'de> bitcode::__private::Decode<'de> for SectionBlockStates {
 pub struct SectionBlockStatesDecoder<'de> {
     var1: bitcode::__private::VariantDecoder<'de, 2usize, false>,
     var2: bitcode::__private::VariantDecoder<'de, 4usize, true>,
-    unanymous_pallete: <String as bitcode::__private::Decode<'de>>::Decoder,
+    unanymous_palette: <String as bitcode::__private::Decode<'de>>::Decoder,
     palette: <Vec<String> as bitcode::__private::Decode<'de>>::Decoder,
     data: <Vec<u8> as bitcode::__private::Decode<'de>>::Decoder,
 }
@@ -155,7 +155,7 @@ impl<'__de> bitcode::__private::View<'__de> for SectionBlockStatesDecoder<'__de>
         self.var1.populate(input, __length)?;
 
         let __length = self.var1.length(0);
-        self.unanymous_pallete.populate(input, __length)?;
+        self.unanymous_palette.populate(input, __length)?;
 
         let __length = self.var1.length(1);
         self.var2.populate(input, __length)?;
@@ -171,7 +171,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
     fn decode_in_place(&mut self, out: &mut std::mem::MaybeUninit<SectionBlockStates>) {
         let (block_data, palette) = match self.var1.decode() {
             0u8 => {
-                let palette = self.unanymous_pallete.decode();
+                let palette = self.unanymous_palette.decode();
                 (vec![0; 16 * 16 * 16], vec![palette])
             }
             1u8 => match self.var2.decode() {
