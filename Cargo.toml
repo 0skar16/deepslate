@@ -18,7 +18,7 @@ zstd = "0.13"
 
 [features]
 binary = ["fastanvil", "clap", "fastnbt", "rayon"]
-default = ["binary"]
+default = []
 
 [[bin]]
 path = "src/main.rs"
