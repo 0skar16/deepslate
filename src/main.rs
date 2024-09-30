@@ -137,19 +137,19 @@ pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Optio
         return None;
     };
     let block_data: Vec<u64> = block_data_iter.map(|b| b as u64).collect();
-    let block_data = SectionBlockStates {
+    let block_states = SectionBlockStates {
         block_data,
         palette: block_palette,
     };
-    let biome_pallete = section
+    let biome_palette = section
         .biomes
         .palette()
         .into_iter()
         .map(|biome| deepslate::Biome::from(*biome))
         .collect();
     Some(deepslate::Section {
-        block_states: block_data,
-        biome_palette: biome_pallete,
+        block_states,
+        biome_palette,
         block_light: None,
         sky_light: None,
         y: section.y,
