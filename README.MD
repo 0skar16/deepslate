@@ -11,7 +11,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 ## Roadmap (at least what I can think of rn):
 - [ ] Fix errors in some places
 - [ ] Update packages
-- [ ] Do something with the big biome enum 
+- [x] Do something with the big biome enum 
 - [x] Scrap or implement compression ([#3](https://github.com/0skar16/deepslate/issues/3))
 - [x] After adding bitcode the bit packing of the block pallete references may not be needed, so check that and scrap if need be ([#3](https://github.com/0skar16/deepslate/issues/3))
 - [ ] Switch to using lurcar as the archive ([#2](https://github.com/0skar16/deepslate/issues/2))
