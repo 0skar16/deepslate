@@ -29,7 +29,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 
 | Scenario        | Deepslate (v0.2.0, zstd)         | Polar (v1, zstd) | Polar (v1, uncompressed) | TNT (v1) | Anvil |
 |-----------------|----------------------------------|------------------|--------------------------|----------|-------|
-| 1.19.4 Region   | 4.9mb (WOW)                      | 5.9mb            | 26.1mb                   | 115.9mb  | 9.7mb |
+| 1.19.4 Region   | 4.8mb (WOW)                      | 5.9mb            | 26.1mb                   | 115.9mb  | 9.7mb |
 
 *The difference may also be the fault of the lack of entities or block states*
 

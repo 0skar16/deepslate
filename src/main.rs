@@ -7,7 +7,7 @@ use std::{
 };
 
 use clap::Parser;
-use deepslate::{writer::DeepslateWriter, chunk::{Chunk, Section, SectionBlockStates}};
+use deepslate::{chunk::{BlockState, Chunk, Section, SectionBlockStates}, writer::DeepslateWriter};
 use fastanvil::{JavaChunk, RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -122,7 +122,7 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Option<Section> {
-    let block_palette: Vec<String> = section
+    let block_palette: Vec<BlockState> = section
         .block_states
         .palette()
         .into_iter()
@@ -131,6 +131,9 @@ pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Optio
                 .encoded_description()
                 .to_string()
                 .replace("minecraft:", "")
+        })
+        .map(|block| {
+            BlockState::from(block)
         })
         .collect();
     let Some(block_data_iter) = section.block_states.try_iter_indices() else {
