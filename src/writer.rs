@@ -3,7 +3,7 @@ use std::{
     io::{Seek, Write},
 };
 
-use crate::{Chunk, ChunkCompression, ChunkEntry, DeepslateWorld, CHUNK_COMPRESSION_THRESHOLD};
+use crate::{chunk::Chunk, chunk::ChunkCompression, ChunkEntry, DeepslateWorld, CHUNK_COMPRESSION_THRESHOLD};
 use anyhow::{bail, Result};
 use byteorder::{LittleEndian, WriteBytesExt};
 

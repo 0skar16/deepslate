@@ -1,4 +1,4 @@
-use crate::{Chunk, DeepslateWorld, CURRENT_VERSION, MAGIC_NUMBER};
+use crate::{chunk::{Chunk, ChunkCompression}, DeepslateWorld, CURRENT_VERSION, MAGIC_NUMBER};
 use anyhow::{anyhow, bail, Result};
 use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{self, Cursor, Read, Seek};
@@ -49,14 +49,14 @@ impl<R: Read + Seek> DeepslateReader<R> {
         self.reader.read_exact(&mut buf)?;
 
         let buf = match entry.compression {
-            crate::ChunkCompression::None => buf,
-            crate::ChunkCompression::LZ4 => {
+            ChunkCompression::None => buf,
+            ChunkCompression::LZ4 => {
                 let mut uncompressed_buf = vec![0u8; entry.original_len as usize];
                 let mut dec = lz4::Decoder::new(Cursor::new(buf))?;
                 dec.read_exact(&mut uncompressed_buf)?;
                 uncompressed_buf
             }
-            crate::ChunkCompression::Zstd => zstd::decode_all(Cursor::new(buf))?,
+            ChunkCompression::Zstd => zstd::decode_all(Cursor::new(buf))?,
         };
 
         Ok(bitcode::decode(&buf)?)

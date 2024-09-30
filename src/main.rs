@@ -7,7 +7,7 @@ use std::{
 };
 
 use clap::Parser;
-use deepslate::{writer::DeepslateWriter, Chunk, Section, SectionBlockStates};
+use deepslate::{writer::DeepslateWriter, chunk::{Chunk, Section, SectionBlockStates}};
 use fastanvil::{JavaChunk, RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -147,7 +147,7 @@ pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Optio
         .into_iter()
         .map(|biome| deepslate::Biome::from(*biome))
         .collect();
-    Some(deepslate::Section {
+    Some(deepslate::chunk::Section {
         block_states,
         biome_palette,
         block_light: None,
