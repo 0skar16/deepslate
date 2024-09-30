@@ -23,6 +23,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
     - [ ] reader.rs
     - [ ] writer.rs
 - [ ] Better errors
+- [ ] Error/corruption checking (the last thing we need is a bitcode error)
 
 ## Comparison?
 
