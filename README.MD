@@ -22,6 +22,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
     - [ ] main.rs
     - [ ] reader.rs
     - [ ] writer.rs
+- [ ] Better errors
 
 ## Comparison?
 
