@@ -32,18 +32,18 @@ impl<R: Read + Seek> DeepslateReader<R> {
             data_start,
         })
     }
-    pub fn chunk(&mut self, chunk_id: usize) -> Result<Chunk> {
+    pub fn chunk(&mut self, chunk_id: u32) -> Result<Chunk> {
         let mut data_start = self.data_start;
-        for chunk in &(&self.world.chunks)[0..chunk_id] {
+        for chunk in &(&self.world.chunks)[0..chunk_id as usize] {
             data_start += chunk.len as u64;
         }
         let entry = self
             .world
             .chunks
-            .get(chunk_id)
+            .get(chunk_id as usize)
             .ok_or_else(|| anyhow!("Couldn't get entry!"))?;
         
-        let mut buf = vec![0u8; entry.len];
+        let mut buf = vec![0u8; entry.len as usize];
         self.reader
             .seek(io::SeekFrom::Start(data_start))?;
         self.reader.read_exact(&mut buf)?;
@@ -51,7 +51,7 @@ impl<R: Read + Seek> DeepslateReader<R> {
         let buf = match entry.compression {
             crate::ChunkCompression::None => buf,
             crate::ChunkCompression::LZ4 => {
-                let mut uncompressed_buf = vec![0u8; entry.original_len];
+                let mut uncompressed_buf = vec![0u8; entry.original_len as usize];
                 let mut dec = lz4::Decoder::new(Cursor::new(buf))?;
                 dec.read_exact(&mut uncompressed_buf)?;
                 uncompressed_buf
@@ -61,7 +61,7 @@ impl<R: Read + Seek> DeepslateReader<R> {
 
         Ok(bitcode::decode(&buf)?)
     }
-    pub fn chunk_by_pos(&mut self, pos: (isize, isize)) -> Result<Chunk> {
+    pub fn chunk_by_pos(&mut self, pos: (i32, i32)) -> Result<Chunk> {
         let mut id = 0;
         for chunk in &self.world.chunks {
             if chunk.pos == pos {

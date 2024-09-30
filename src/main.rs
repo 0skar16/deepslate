@@ -17,13 +17,13 @@ pub struct Cli {
     anvil_world: PathBuf,
     deepslate_world: PathBuf,
     #[arg(required = false, long)]
-    min_x: Option<isize>,
+    min_x: Option<i32>,
     #[arg(required = false, long)]
-    min_z: Option<isize>,
+    min_z: Option<i32>,
     #[arg(required = false, long)]
-    max_x: Option<isize>,
+    max_x: Option<i32>,
     #[arg(required = false, long)]
-    max_z: Option<isize>,
+    max_z: Option<i32>,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -56,8 +56,8 @@ fn main() -> anyhow::Result<()> {
                 .expect("Region not found");
             for chunk_data in region.iter() {
                 if let Ok(chunk_data) = chunk_data {
-                    let chunk_abs_x = region_x.0 * 32 + (chunk_data.x as isize);
-                    let chunk_abs_z = region_z.0 * 32 + (chunk_data.z as isize);
+                    let chunk_abs_x = region_x.0 as i32 * 32 + (chunk_data.x as i32);
+                    let chunk_abs_z = region_z.0 as i32 * 32 + (chunk_data.z as i32);
                     if let Some(min_x) = min_x {
                         if chunk_abs_x < min_x {
                             continue;

@@ -18,9 +18,9 @@ pub struct DeepslateWorld {
 
 #[derive(Clone, PartialEq, Debug, Encode, Decode, Default, Copy)]
 pub struct ChunkEntry {
-    pub pos: (isize, isize),
-    pub len: usize,
-    pub original_len: usize,
+    pub pos: (i32, i32),
+    pub len: u32,
+    pub original_len: u32,
     pub compression: ChunkCompression,
 }
 

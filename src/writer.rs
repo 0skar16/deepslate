@@ -9,11 +9,11 @@ use byteorder::{LittleEndian, WriteBytesExt};
 
 pub struct DeepslateWriter<W> {
     writer: W,
-    written_chunks: BTreeSet<(isize, isize)>,
+    written_chunks: BTreeSet<(i32, i32)>,
     chunks: Vec<ChunkEntry>,
     min_section: i8,
     max_section: i8,
-    chunks_len: usize,
+    chunks_len: u32,
 }
 
 impl<W: Seek + Write> DeepslateWriter<W> {
@@ -32,7 +32,7 @@ impl<W: Seek + Write> DeepslateWriter<W> {
         })
     }
 
-    pub fn insert_chunk(&mut self, pos: (isize, isize), chunk: Chunk) -> Result<()> {
+    pub fn insert_chunk(&mut self, pos: (i32, i32), chunk: Chunk) -> Result<()> {
         if self.written_chunks.contains(&pos) {
             bail!("Chunk {:?} has already been written", pos);
         }
@@ -49,8 +49,8 @@ impl<W: Seek + Write> DeepslateWriter<W> {
         };
         self.chunks.push(ChunkEntry {
             pos,
-            len: chunk_buf.len(),
-            original_len: len,
+            len: chunk_buf.len() as u32,
+            original_len: len as u32,
             compression: if len > CHUNK_COMPRESSION_THRESHOLD {
                 ChunkCompression::Zstd
             } else {
@@ -58,7 +58,7 @@ impl<W: Seek + Write> DeepslateWriter<W> {
             },
         });
 
-        self.chunks_len += chunk_buf.len();
+        self.chunks_len += chunk_buf.len() as u32;
         self.writer.write_all(&chunk_buf)?;
 
         Ok(())
