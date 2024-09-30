@@ -12,8 +12,8 @@ pub(crate) const MAGIC_NUMBER: u64 = 0x6574616c73706400; // \0dpslate
 pub(crate) const CURRENT_VERSION: u16 = 0x5;
 pub(crate) const CHUNK_COMPRESSION_THRESHOLD: usize = 0;
 #[derive(Clone, Debug, Encode, Decode)]
-pub struct DeepslateWorld {
+pub struct DeepslateRegion {
     pub min_section: i8,
     pub max_section: i8,
-    pub chunks: Vec<ChunkEntry>,
+    pub chunks: [[Option<ChunkEntry>; 12]; 12],
 }

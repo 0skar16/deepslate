@@ -98,7 +98,7 @@ fn main() -> anyhow::Result<()> {
                                 if let Ok(mut writer) = region_writer_rw.write() {
                                     writer
                                         .insert_chunk(
-                                            (chunk_abs_x, chunk_abs_z),
+                                            (chunk_data.x as u32, chunk_data.z as u32),
                                             Chunk {
                                                 sections,
                                                 block_entities: HashMap::new(),
