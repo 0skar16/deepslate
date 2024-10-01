@@ -31,7 +31,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 |-----------------|----------------------------------|------------------|--------------------------|----------|-------|
 | 1.19.4 Region   | 4.8mb (WOW)                      | 5.9mb            | 26.1mb                   | 115.9mb  | 9.7mb |
 
-*The difference may also be the fault of the lack of entities or block states*
+*The difference may also be the fault of the lack of block entities*
 
 *I also should say that it is 2am as of writing this so your mileage with this README may vary.*
 
