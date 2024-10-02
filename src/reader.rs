@@ -1,10 +1,10 @@
-use crate::{chunk::{Chunk, ChunkCompression}, DeepslateRegion, CURRENT_VERSION, MAGIC_NUMBER};
+use crate::{chunk::{Chunk, ChunkCompression}, Region, CURRENT_VERSION, MAGIC_NUMBER};
 use anyhow::{anyhow, bail, Result};
 use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{self, Cursor, Read, Seek};
 
 pub struct DeepslateReader<R> {
-    world: DeepslateRegion,
+    world: Region,
     data_start: u64,
     reader: R,
 }
@@ -34,14 +34,14 @@ impl<R: Read + Seek> DeepslateReader<R> {
     }
     pub fn chunk_by_pos(&mut self, pos: (u32, u32)) -> Result<Chunk> {
         let mut data_start = self.data_start;
-        for x in 0..pos.0 {
-            for z in 0..pos.1 {
-                data_start += self.world.chunks[x as usize][z as usize].map(|c| c.len).unwrap_or(0) as u64;
+        for z in 0..pos.1 {
+            for x in 0..pos.0 {
+                data_start += self.world.chunks[z as usize][x as usize].map(|c| c.len).unwrap_or(0) as u64;
             }
         }
         let entry = self
             .world
-            .chunks[pos.0 as usize][pos.1 as usize]
+            .chunks[pos.1 as usize][pos.0 as usize]
             .as_ref()
             .ok_or_else(|| anyhow!("Couldn't get entry!"))?;
         
@@ -63,7 +63,7 @@ impl<R: Read + Seek> DeepslateReader<R> {
 
         Ok(bitcode::decode(&buf)?)
     }
-    pub fn world(&self) -> DeepslateRegion {
+    pub fn world(&self) -> Region {
         self.world.clone()
     }
 }
