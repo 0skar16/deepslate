@@ -2,14 +2,14 @@ use std::{
     collections::BTreeSet, io::{Seek, Write}
 };
 
-use crate::{chunk::{Chunk, ChunkCompression}, ChunkEntry, Region, CHUNK_COMPRESSION_THRESHOLD, REGION_EDGE_LENGTH};
+use crate::{chunk::{Chunk, ChunkCompression}, ChunkEntry, Region, CHUNK_COMPRESSION_THRESHOLD, REGION_CHUNK_COUNT, REGION_EDGE_LENGTH};
 use anyhow::{bail, Result};
 use byteorder::{LittleEndian, WriteBytesExt};
 
 pub struct DeepslateWriter<W> {
     writer: W,
     written_chunks: BTreeSet<(u32, u32)>,
-    chunks: [[Option<ChunkEntry>; REGION_EDGE_LENGTH]; REGION_EDGE_LENGTH],
+    chunks: [Option<ChunkEntry>; REGION_CHUNK_COUNT],
     min_section: i8,
     max_section: i8,
     chunks_len: u64,
@@ -27,7 +27,7 @@ impl<W: Seek + Write> DeepslateWriter<W> {
             max_section,
             chunks_len: 0,
             written_chunks: BTreeSet::new(),
-            chunks: [[None; REGION_EDGE_LENGTH]; REGION_EDGE_LENGTH],
+            chunks: [None; REGION_CHUNK_COUNT],
         })
     }
 
@@ -46,7 +46,7 @@ impl<W: Seek + Write> DeepslateWriter<W> {
         } else {
             chunk_buf
         };
-        self.chunks[pos.1 as usize][pos.0 as usize].replace(ChunkEntry {
+        self.chunks[pos.1 as usize * REGION_EDGE_LENGTH + pos.0 as usize].replace(ChunkEntry {
             len: chunk_buf.len() as u32,
             original_len: len as u32,
             compression: if len > CHUNK_COMPRESSION_THRESHOLD {

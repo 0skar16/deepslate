@@ -18,11 +18,13 @@ pub(crate) const CURRENT_VERSION: u16 = 0x5;
 pub(crate) const CHUNK_COMPRESSION_THRESHOLD: usize = 0;
 pub const REGION_EDGE_LENGTH: usize = 32;
 pub const REGION_EDGE_LENGTH_I32: i32 = REGION_EDGE_LENGTH as i32;
+pub const REGION_CHUNK_COUNT: usize = REGION_EDGE_LENGTH*REGION_EDGE_LENGTH;
+
 #[derive(Clone, Debug, Encode, Decode)]
 pub struct Region {
     pub min_section: i8,
     pub max_section: i8,
-    pub chunks: [[Option<ChunkEntry>; REGION_EDGE_LENGTH]; REGION_EDGE_LENGTH],
+    pub chunks: [Option<ChunkEntry>; REGION_CHUNK_COUNT],
 }
 
 pub struct DeepslateRegions {

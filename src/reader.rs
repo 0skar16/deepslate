@@ -1,4 +1,4 @@
-use crate::{chunk::{Chunk, ChunkCompression}, Region, CURRENT_VERSION, MAGIC_NUMBER};
+use crate::{chunk::{Chunk, ChunkCompression}, Region, CURRENT_VERSION, MAGIC_NUMBER, REGION_EDGE_LENGTH};
 use anyhow::{anyhow, bail, Result};
 use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{self, Cursor, Read, Seek};
@@ -35,7 +35,7 @@ impl<R: Read + Seek> DeepslateReader<R> {
     pub fn chunk_by_pos(&mut self, pos: (u32, u32)) -> Result<Chunk> {
         let entry = self
             .world
-            .chunks[pos.1 as usize][pos.0 as usize]
+            .chunks[pos.1 as usize * REGION_EDGE_LENGTH + pos.0 as usize]
             .as_ref()
             .ok_or_else(|| anyhow!("Couldn't get entry!"))?;
 
