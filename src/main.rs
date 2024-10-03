@@ -61,7 +61,6 @@ fn main() -> anyhow::Result<()> {
                 if let Ok(chunk_data) = chunk_data {
                     let chunk_abs_x = region_x.0 as i32 * 32 + (chunk_data.x as i32);
                     let chunk_abs_z = region_z.0 as i32 * 32 + (chunk_data.z as i32);
-                    dbg!((chunk_abs_x, chunk_abs_z));
                     if let Some(min_x) = min_x {
                         if chunk_abs_x < min_x {
                             continue;
