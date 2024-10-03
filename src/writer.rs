@@ -1,15 +1,10 @@
 use std::{
-    collections::BTreeSet, fs::File, io::{Seek, Write}, ops::{Deref, DerefMut}
+    collections::BTreeSet, io::{Seek, Write}
 };
 
 use crate::{chunk::{Chunk, ChunkCompression}, ChunkEntry, Region, CHUNK_COMPRESSION_THRESHOLD, REGION_EDGE_LENGTH};
 use anyhow::{bail, Result};
 use byteorder::{LittleEndian, WriteBytesExt};
-
-extern "C" {
-    fn c_lock(fd: i32, is_blocking: i32, is_writeable: i32) -> i32;
-    fn c_unlock(fd: i32) -> i32;
-}
 
 pub struct DeepslateWriter<W> {
     writer: W,

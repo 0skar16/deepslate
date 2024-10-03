@@ -1,13 +1,12 @@
 #![feature(iter_array_chunks)]
 use std::{
     collections::HashMap,
-    fs::File,
     path::PathBuf,
-    sync::{Arc, RwLock},
+    sync::Arc,
 };
 
 use clap::Parser;
-use deepslate::{chunk::{Chunk, Section, SectionBlockStates}, writer::DeepslateWriter, DeepslateRegions};
+use deepslate::{chunk::{Chunk, Section, SectionBlockStates}, DeepslateRegions};
 use fastanvil::{JavaChunk, RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 

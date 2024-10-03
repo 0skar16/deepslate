@@ -1,7 +1,7 @@
 #![feature(iter_array_chunks)]
 use std::{fs::File, path::PathBuf};
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 use bitcode::{Decode, Encode};
 
 pub mod reader;
