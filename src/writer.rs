@@ -17,7 +17,7 @@ pub struct DeepslateWriter<W> {
     chunks: [[Option<ChunkEntry>; REGION_EDGE_LENGTH]; REGION_EDGE_LENGTH],
     min_section: i8,
     max_section: i8,
-    chunks_len: u32,
+    chunks_len: u64,
 }
 
 impl<W: Seek + Write> DeepslateWriter<W> {
@@ -59,9 +59,10 @@ impl<W: Seek + Write> DeepslateWriter<W> {
             } else {
                 ChunkCompression::None
             },
+            data_start: self.chunks_len,
         });
 
-        self.chunks_len += chunk_buf.len() as u32;
+        self.chunks_len += chunk_buf.len() as u64;
         self.writer.write_all(&chunk_buf)?;
 
         Ok(())

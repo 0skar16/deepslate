@@ -6,6 +6,7 @@ pub use section::*;
 
 #[derive(Clone, PartialEq, Debug, Encode, Decode, Default, Copy)]
 pub struct ChunkEntry {
+    pub data_start: u64,
     pub len: u32,
     pub original_len: u32,
     pub compression: ChunkCompression,

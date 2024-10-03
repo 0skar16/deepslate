@@ -33,18 +33,14 @@ impl<R: Read + Seek> DeepslateReader<R> {
         })
     }
     pub fn chunk_by_pos(&mut self, pos: (u32, u32)) -> Result<Chunk> {
-        let mut data_start = self.data_start;
-        for z in 0..pos.1 {
-            for x in 0..pos.0 {
-                data_start += self.world.chunks[z as usize][x as usize].map(|c| c.len).unwrap_or(0) as u64;
-            }
-        }
         let entry = self
             .world
             .chunks[pos.1 as usize][pos.0 as usize]
             .as_ref()
             .ok_or_else(|| anyhow!("Couldn't get entry!"))?;
-        
+
+        let data_start = self.data_start + entry.data_start;
+            
         let mut buf = vec![0u8; entry.len as usize];
         self.reader
             .seek(io::SeekFrom::Start(data_start))?;
