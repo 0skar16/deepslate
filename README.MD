@@ -24,6 +24,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
     - [ ] writer.rs
 - [ ] Better error messages
 - [ ] Error/corruption checking (the last thing we need is a bitcode error)
+- [ ] Improve writing
 
 ## Comparison?
 
