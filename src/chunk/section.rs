@@ -12,10 +12,10 @@ pub struct Section {
     pub block_light: Option<Vec<u8>>,
     pub sky_light: Option<Vec<u8>>,
 }
-#[derive(Debug, Encode, Decode)]
+#[derive(Debug, Encode, Decode, Clone, PartialEq)]
 pub struct BlockState {
-    block: String,
-    properties: HashMap<PropName, PropValue>,
+    pub block: String,
+    pub properties: HashMap<PropName, PropValue>,
 }
 
 impl From<String> for BlockState {
