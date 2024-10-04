@@ -32,6 +32,13 @@ impl<R: Read + Seek> DeepslateReader<R> {
             data_start,
         })
     }
+    pub fn reconstruct(reader: R, world: Region, data_start: u64) -> Self {
+        Self {
+            world,
+            reader,
+            data_start
+        }
+    }
     pub fn chunk_by_pos(&mut self, pos: (u32, u32)) -> Result<Chunk> {
         let entry = self
             .world
@@ -61,5 +68,8 @@ impl<R: Read + Seek> DeepslateReader<R> {
     }
     pub fn world(&self) -> Region {
         self.world.clone()
+    }
+    pub fn deconstruct(self) -> (R, Region, u64) {
+        (self.reader, self.world, self.data_start)
     }
 }
