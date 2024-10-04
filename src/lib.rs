@@ -27,11 +27,11 @@ pub struct Region {
     pub chunks: [Option<ChunkEntry>; REGION_CHUNK_COUNT],
 }
 
-pub struct DeepslateRegions {
+pub struct DeepslateWorld {
     dir: PathBuf,
 }
 
-impl DeepslateRegions {
+impl DeepslateWorld {
     pub fn new(dir: impl Into<PathBuf>) -> Result<Self> {
         let dir: PathBuf = dir.into();
         std::fs::create_dir_all(dir.join("reg"))?;

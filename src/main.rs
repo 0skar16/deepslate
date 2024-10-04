@@ -6,7 +6,7 @@ use std::{
 };
 
 use clap::Parser;
-use deepslate::{chunk::{Chunk, Section, SectionBlockStates}, DeepslateRegions};
+use deepslate::{chunk::{Chunk, Section, SectionBlockStates}, DeepslateWorld};
 use fastanvil::{JavaChunk, RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -40,7 +40,7 @@ fn main() -> anyhow::Result<()> {
     //let writer = DeepslateWriter::new(File::create(&deepslate_world)?, -4, 19)?;
     //let writer_rw = Arc::new(RwLock::new(writer));
 
-    let regions = Arc::new(DeepslateRegions::new(&deepslate_world)?);
+    let regions = Arc::new(DeepslateWorld::new(&deepslate_world)?);
 
     let region_file_loader = Arc::new(RegionFileLoader::new(region_dir.clone()));
     let region_list = region_file_loader.list()?;
