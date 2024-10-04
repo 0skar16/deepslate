@@ -15,7 +15,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 - [x] Scrap or implement compression ([#3](https://github.com/0skar16/deepslate/issues/3))
 - [x] After adding bitcode the bit packing of the block pallete references may not be needed, so check that and scrap if need be ([#3](https://github.com/0skar16/deepslate/issues/3))
 - [ ] Switch to using lurcar as the archive ([#2](https://github.com/0skar16/deepslate/issues/2))
-- [ ] (BIG) Rewrite to implement multi-file support ([#2](https://github.com/0skar16/deepslate/issues/2))
+- [x] (BIG) Rewrite to implement multi-file support ([#2](https://github.com/0skar16/deepslate/issues/2))
 - [ ] Add block entities and entities ([#4](https://github.com/0skar16/deepslate/issues/4))
 - [ ] Docs: ([#1](https://github.com/0skar16/deepslate/issues/1))
     - [ ] lib.rs
