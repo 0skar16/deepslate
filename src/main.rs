@@ -1,13 +1,12 @@
 #![feature(iter_array_chunks)]
 use std::{
     collections::HashMap,
-    fs::File,
     path::PathBuf,
-    sync::{Arc, RwLock},
+    sync::Arc,
 };
 
 use clap::Parser;
-use deepslate::{chunk::{BlockState, Chunk, Section, SectionBlockStates}, writer::DeepslateWriter};
+use deepslate::{chunk::{BlockState, Chunk, Section, SectionBlockStates}, DeepslateWorld};
 use fastanvil::{JavaChunk, RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -38,15 +37,17 @@ fn main() -> anyhow::Result<()> {
 
     let region_dir = anvil_world.join("region");
 
-    let writer = DeepslateWriter::new(File::create(&deepslate_world)?, -4, 19)?;
-    let writer_rw = Arc::new(RwLock::new(writer));
+    //let writer = DeepslateWriter::new(File::create(&deepslate_world)?, -4, 19)?;
+    //let writer_rw = Arc::new(RwLock::new(writer));
+
+    let regions = Arc::new(DeepslateWorld::new(&deepslate_world)?);
 
     let region_file_loader = Arc::new(RegionFileLoader::new(region_dir.clone()));
     let region_list = region_file_loader.list()?;
 
     let _region_file_loader = region_file_loader.clone();
 
-    let region_writer_rw = writer_rw.clone();
+    //let region_writer_rw = writer_rw.clone();
     region_list
         .par_iter()
         .for_each(move |(region_x, region_z)| {
@@ -54,6 +55,7 @@ fn main() -> anyhow::Result<()> {
                 .region(*region_x, *region_z)
                 .expect("Error loading region")
                 .expect("Region not found");
+            let mut writer = regions.write_region(region_x.0 as i32, region_z.0 as i32, -4, 19).expect("Couldn't write to region");
             for chunk_data in region.iter() {
                 if let Ok(chunk_data) = chunk_data {
                     let chunk_abs_x = region_x.0 as i32 * 32 + (chunk_data.x as i32);
@@ -95,30 +97,31 @@ fn main() -> anyhow::Result<()> {
                                         }
                                     })
                                     .collect();
-                                if let Ok(mut writer) = region_writer_rw.write() {
-                                    writer
-                                        .insert_chunk(
-                                            (chunk_abs_x, chunk_abs_z),
-                                            Chunk {
-                                                sections,
-                                                block_entities: HashMap::new(),
-                                                heightmap_mask: 0x0,
-                                                heightmaps: vec![],
-                                            },
-                                        )
-                                        .expect("Couldn't insert chunk");
-                                }
+                                writer
+                                    .insert_chunk(
+                                        (chunk_data.x as u32, chunk_data.z as u32),
+                                        Chunk {
+                                            sections,
+                                            block_entities: HashMap::new(),
+                                            heightmap_mask: 0x0,
+                                            heightmaps: vec![],
+                                        },
+                                    )
+                                    .expect("Couldn't insert chunk");
                             }
+
                         }
                         _ => continue,
                     };
                 }
             }
+            writer.finalise().expect("Couldn't finalise a region");
+            
         });
-    writer_rw
+    /*writer_rw
         .write()
         .expect("Couldn't lock writer")
-        .finalise()?;
+        .finalise()?;*/
     Ok(())
 }
 pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Option<Section> {
