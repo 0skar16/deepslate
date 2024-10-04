@@ -10,13 +10,13 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 
 ## Roadmap (at least what I can think of rn):
 - [ ] Fix errors in some places
-- [ ] Update packages
+- [x] Update packages
 - [x] Do something with the big biome enum 
 - [x] Scrap or implement compression ([#3](https://github.com/0skar16/deepslate/issues/3))
 - [x] After adding bitcode the bit packing of the block pallete references may not be needed, so check that and scrap if need be ([#3](https://github.com/0skar16/deepslate/issues/3))
 - [ ] Switch to using lurcar as the archive ([#2](https://github.com/0skar16/deepslate/issues/2))
 - [ ] (BIG) Rewrite to implement multi-file support ([#2](https://github.com/0skar16/deepslate/issues/2))
-- [ ] Add block states and entities ([#4](https://github.com/0skar16/deepslate/issues/4))
+- [ ] Add block entities and entities ([#4](https://github.com/0skar16/deepslate/issues/4))
 - [ ] Docs: ([#1](https://github.com/0skar16/deepslate/issues/1))
     - [ ] lib.rs
     - [ ] main.rs
@@ -29,9 +29,9 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 
 | Scenario        | Deepslate (v0.2.0, zstd)         | Polar (v1, zstd) | Polar (v1, uncompressed) | TNT (v1) | Anvil |
 |-----------------|----------------------------------|------------------|--------------------------|----------|-------|
-| 1.19.4 Region   | 4.9mb (WOW)                      | 5.9mb            | 26.1mb                   | 115.9mb  | 9.7mb |
+| 1.19.4 Region   | 4.8mb (WOW)                      | 5.9mb            | 26.1mb                   | 115.9mb  | 9.7mb |
 
-*The difference may also be the fault of the lack of entities or block states*
+*The difference may also be the fault of the lack of block entities*
 
 *I also should say that it is 2am as of writing this so your mileage with this README may vary.*
 

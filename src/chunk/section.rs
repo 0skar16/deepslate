@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use bitcode::{Decode, Encode};
 
-use crate::static_enums::Biome;
+use crate::{static_enums::Biome, PropName, PropValue};
 
 #[derive(Debug, Encode, Decode)]
 pub struct Section {
@@ -10,9 +12,34 @@ pub struct Section {
     pub block_light: Option<Vec<u8>>,
     pub sky_light: Option<Vec<u8>>,
 }
+#[derive(Debug, Encode, Decode)]
+pub struct BlockState {
+    block: String,
+    properties: HashMap<PropName, PropValue>,
+}
+
+impl From<String> for BlockState {
+    fn from(value: String) -> Self {
+        let (block, s_state) = value.split_once("|").expect("Couldn't split blockstateid");
+        let mut properties = HashMap::new();
+        for prop in s_state.to_string().split(",") {
+            let prop = prop.to_string();
+            if prop.len() == 0 {
+                continue;
+            }
+            let (name, value) = prop.split_once("=").expect("Couldn't split prop");
+            properties.insert(
+                PropName::from_str(name),
+                PropValue::from_str(value),
+            );
+        }
+        Self { block: block.to_string(), properties }
+    }
+}
+
 #[derive(Debug)]
 pub struct SectionBlockStates {
-    pub palette: Vec<String>,
+    pub palette: Vec<BlockState>,
     pub block_data: Vec<u64>,
 }
 
@@ -20,8 +47,8 @@ pub struct SectionBlockStates {
 pub struct SectionBlockStatesEncoder {
     var1: bitcode::__private::VariantEncoder<2usize>,
     var2: bitcode::__private::VariantEncoder<4usize>,
-    palette: <Vec<String> as bitcode::__private::Encode>::Encoder,
-    unanymous_palette: <String as bitcode::__private::Encode>::Encoder,
+    palette: <Vec<BlockState> as bitcode::__private::Encode>::Encoder,
+    unanymous_palette: <BlockState as bitcode::__private::Encode>::Encoder,
     data: <Vec<u8> as bitcode::__private::Encode>::Encoder,
 }
 
@@ -103,8 +130,8 @@ impl<'de> bitcode::__private::Decode<'de> for SectionBlockStates {
 pub struct SectionBlockStatesDecoder<'de> {
     var1: bitcode::__private::VariantDecoder<'de, 2usize, false>,
     var2: bitcode::__private::VariantDecoder<'de, 4usize, true>,
-    unanymous_palette: <String as bitcode::__private::Decode<'de>>::Decoder,
-    palette: <Vec<String> as bitcode::__private::Decode<'de>>::Decoder,
+    unanymous_palette: <BlockState as bitcode::__private::Decode<'de>>::Decoder,
+    palette: <Vec<BlockState> as bitcode::__private::Decode<'de>>::Decoder,
     data: <Vec<u8> as bitcode::__private::Decode<'de>>::Decoder,
 }
 
