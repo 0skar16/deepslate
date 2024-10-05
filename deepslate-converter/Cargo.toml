@@ -1,0 +1,13 @@
+[package]
+name = "deepslate-converter"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+
+[dependencies]
+clap = { version = "4", features = ["derive"]}
+fastnbt = "2.5"
+rayon = "1"
+deepslate = {path = "../", features = ["fastanvil"]}
+fastanvil.workspace = true
+anyhow.workspace = true

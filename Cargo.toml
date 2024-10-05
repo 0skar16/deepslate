@@ -1,27 +1,31 @@
 [package]
 name = "deepslate"
-version = "0.2.0"
-edition = "2021"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1"
 bitcode = "0.6"
 byteorder = "1"
-clap = { version = "4", features = ["derive"], optional = true }
-fastanvil = { version = "0.31", optional = true }
-fastnbt = { version = "2.5", optional = true }
 lru = "0.12.4"
 lz4 = "1.28"
-rayon = { version = "1", optional = true }
 zstd = "0.13"
+anyhow.workspace = true
+fastanvil = {workspace = true, optional = true}
 
 [features]
-binary = ["fastanvil", "clap", "fastnbt", "rayon"]
-default = []
+fastanvil = ["dep:fastanvil"]
 
-[[bin]]
-path = "src/main.rs"
-name = "deepslate-converter"
-required-features = ["binary"]
+[workspace]
+members = ["deepslate-converter"]
+
+[workspace.package]
+authors = ["0skar16"]
+version = "0.2.0"
+edition = "2021"
+
+[workspace.dependencies]
+fastanvil = "0.31"
+anyhow = "1"

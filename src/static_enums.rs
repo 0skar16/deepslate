@@ -107,7 +107,7 @@ pub enum Biome {
     Custom(String),
     Unknown,
 }
-#[cfg(feature = "binary")]
+#[cfg(feature = "fastanvil")]
 impl From<fastanvil::biome::Biome> for Biome {
     fn from(value: fastanvil::biome::Biome) -> Self {
         match value {
