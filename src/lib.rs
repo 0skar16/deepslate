@@ -15,7 +15,7 @@ pub use static_enums::*;
 use writer::DeepslateWriter;
 
 pub(crate) const MAGIC_NUMBER: u64 = 0x6574616c73706400; // \0dpslate
-pub(crate) const CURRENT_VERSION: u16 = 0x5;
+pub(crate) const CURRENT_VERSION: u16 = 0x9;
 pub(crate) const CHUNK_COMPRESSION_THRESHOLD: usize = 0;
 pub const REGION_EDGE_LENGTH: usize = 32;
 pub const REGION_EDGE_LENGTH_I32: i32 = REGION_EDGE_LENGTH as i32;
