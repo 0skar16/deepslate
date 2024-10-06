@@ -4,7 +4,7 @@ use bitcode::{Decode, Encode};
 
 use crate::{static_enums::Biome, PropName, PropValue};
 
-#[derive(Debug, Encode, Decode)]
+#[derive(Debug, Encode, Decode, Clone, PartialEq)]
 pub struct Section {
     pub y: i8,
     pub block_states: SectionBlockStates,
@@ -37,7 +37,7 @@ impl From<String> for BlockState {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SectionBlockStates {
     pub palette: Vec<BlockState>,
     pub block_data: Vec<u64>,

@@ -1,6 +1,6 @@
 use bitcode::{Decode, Encode};
 
-#[derive(Debug, Encode, Decode)]
+#[derive(Debug, Encode, Decode, Clone, PartialEq)]
 #[repr(u8)]
 pub enum Biome {
     Ocean,

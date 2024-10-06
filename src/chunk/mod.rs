@@ -20,7 +20,7 @@ pub enum ChunkCompression {
     Zstd,
 }
 
-#[derive(Debug, Encode, Decode)]
+#[derive(Debug, Encode, Decode, Clone, PartialEq)]
 pub struct Chunk {
     pub sections: Vec<Option<Section>>,
     pub block_entities: HashMap<i32, BlockEntity>,
@@ -28,7 +28,7 @@ pub struct Chunk {
     pub heightmaps: Vec<Vec<u8>>,
 }
 
-#[derive(Debug, Encode, Decode)]
+#[derive(Debug, Encode, Decode, Clone, PartialEq)]
 pub struct BlockEntity {
     pub block_entity_id: Option<String>,
     pub nbt_data: Vec<u8>,
