@@ -4,7 +4,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{self, Cursor, Read, Seek};
 
 pub struct DeepslateReader<R> {
-    world: Region,
+    region: Region,
     data_start: u64,
     reader: R,
 }
@@ -22,26 +22,26 @@ impl<R: Read + Seek> DeepslateReader<R> {
         let mut world_buf = vec![0u8; world_len];
         reader.read_exact(&mut world_buf)?;
 
-        let world = bitcode::decode(&world_buf)?;
+        let region = bitcode::decode(&world_buf)?;
 
         let data_start: u64 = 8 + 2 + 8 + 4;
         reader.seek(io::SeekFrom::Start(data_start))?;
         Ok(Self {
-            world,
+            region,
             reader,
             data_start,
         })
     }
-    pub fn reconstruct(reader: R, world: Region, data_start: u64) -> Self {
+    pub fn reconstruct(reader: R, region: Region, data_start: u64) -> Self {
         Self {
-            world,
+            region,
             reader,
             data_start
         }
     }
     pub fn chunk_by_pos(&mut self, pos: (u32, u32)) -> Result<Chunk> {
         let entry = self
-            .world
+            .region
             .chunks[pos.1 as usize * REGION_EDGE_LENGTH + pos.0 as usize]
             .as_ref()
             .ok_or_else(|| anyhow!("Couldn't get entry!"))?;
@@ -66,10 +66,10 @@ impl<R: Read + Seek> DeepslateReader<R> {
 
         Ok(bitcode::decode(&buf)?)
     }
-    pub fn world(&self) -> Region {
-        self.world.clone()
+    pub fn region(&self) -> Region {
+        self.region.clone()
     }
     pub fn deconstruct(self) -> (R, Region, u64) {
-        (self.reader, self.world, self.data_start)
+        (self.reader, self.region, self.data_start)
     }
 }
