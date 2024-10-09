@@ -73,16 +73,14 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
             let data: Vec<u8> = if t.palette.len() <= 4 {
                 self.var2.encode(&0);
                 t.block_data
-                    .iter()
-                    .array_chunks::<4>()
-                    .map(|[b1, b2, b3, b4]| (b4 << 6 | b3 << 4 | b2 << 2 | b1) as u8)
+                    .chunks(4)
+                    .map(|b| (b[3] << 6 | b[2] << 4 | b[1] << 2 | b[0]) as u8)
                     .collect()
             } else if t.palette.len() <= 16 {
                 self.var2.encode(&1);
                 t.block_data
-                    .iter()
-                    .array_chunks::<2>()
-                    .map(|[b1, b2]| (b2 << 4 | b1) as u8)
+                    .chunks(2)
+                    .map(|b| (b[1] << 4 | b[0]) as u8)
                     .collect()
             } else if t.palette.len() <= u8::MAX as usize + 1 {
                 self.var2.encode(&2);
@@ -90,10 +88,9 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
             } else {
                 self.var2.encode(&3);
                 t.block_data
-                    .iter()
-                    .array_chunks::<2>()
-                    .map(|[b1, b2]| {
-                        let [_, o3, o2, o1] = (((*b1) | (*b2) << 12) as u32).to_be_bytes();
+                    .chunks(2)
+                    .map(|b| {
+                        let [_, o3, o2, o1] = (((b[0]) | (b[1]) << 12) as u32).to_be_bytes();
                         [o3, o2, o1]
                     })
                     .flatten()
@@ -208,10 +205,9 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
                     let palette = self.palette.decode();
                     (
                         twelves_data
-                            .into_iter()
-                            .array_chunks::<3>()
-                            .map(|[b3, b2, b1]| {
-                                let t = u32::from_be_bytes([0, b3, b2, b1]);
+                            .chunks(3)
+                            .map(|b| {
+                                let t = u32::from_be_bytes([0, b[0], b[1], b[2]]);
                                 [t as u64 & 0xfff, (t as u64 >> 12) & 0xfff]
                             })
                             .flatten()
