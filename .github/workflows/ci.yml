@@ -30,7 +30,7 @@ jobs:
       - name: cargo fmt
         run: cargo fmt --all -- --check
 
-  deepslate-fmt:
+  deepslate-tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
