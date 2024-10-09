@@ -1,4 +1,3 @@
-#![feature(iter_array_chunks)]
 use std::{
     collections::HashMap,
     path::PathBuf,
