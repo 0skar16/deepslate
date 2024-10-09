@@ -7,6 +7,10 @@ use bitcode::{Decode, Encode};
 pub mod reader;
 pub mod writer;
 pub mod chunk;
+
+#[cfg(test)]
+mod tests;
+
 mod static_enums;
 use chunk::{Chunk, ChunkEntry};
 use lru::LruCache;
