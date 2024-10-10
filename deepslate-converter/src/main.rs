@@ -141,7 +141,10 @@ pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Optio
     let Some(block_data_iter) = section.block_states.try_iter_indices() else {
         return None;
     };
-    let block_data: Vec<u64> = block_data_iter.map(|b| b as u64).collect();
+    let _block_data: Vec<u64> = block_data_iter.map(|b| b as u64).collect();
+    let mut block_data = [0u64; 4096];
+    block_data.copy_from_slice(&_block_data);
+    
     let block_states = SectionBlockStates {
         block_data,
         palette: block_palette,

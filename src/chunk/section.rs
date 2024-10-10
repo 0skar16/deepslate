@@ -40,7 +40,7 @@ impl From<String> for BlockState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct SectionBlockStates {
     pub palette: Vec<BlockState>,
-    pub block_data: Vec<u64>,
+    pub block_data: [u64; 4096],
 }
 
 #[derive(Default)]
@@ -155,7 +155,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
     for SectionBlockStatesDecoder<'__de>
 {
     fn decode_in_place(&mut self, out: &mut std::mem::MaybeUninit<SectionBlockStates>) {
-        let (block_data, palette) = match self.var1.decode() {
+        let (_block_data, palette) = match self.var1.decode() {
             0u8 => {
                 let palette = self.unanymous_palette.decode();
                 (vec![0; 16 * 16 * 16], vec![palette])
@@ -219,6 +219,9 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
             },
             _ => unreachable!(),
         };
+        let mut block_data = [0; 4096];
+        block_data.copy_from_slice(&_block_data);
+
         out.write(SectionBlockStates {
             palette,
             block_data,

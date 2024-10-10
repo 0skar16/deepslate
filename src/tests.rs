@@ -39,7 +39,7 @@ fn region_encode_decode() {
                     properties: HashMap::new(),
                 });
             }
-            let mut block_data = vec![0; 16*16*16];
+            let mut block_data = [0; 16*16*16];
             for j in 0..16*16*16 {
                 block_data[j] = rand::random::<u64>() % palette.len() as u64;
             }
