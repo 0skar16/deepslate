@@ -6,7 +6,6 @@ use std::{
 
 use clap::Parser;
 use deepslate::{chunk::{BlockState, Chunk, Section, SectionBlockStates}, DeepslateWorld};
-use fastanvil::{JavaChunk, RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 #[derive(Parser, Debug)]

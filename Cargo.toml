@@ -13,10 +13,6 @@ lru = "0.12.4"
 lz4 = "1.28"
 zstd = "0.13"
 anyhow.workspace = true
-fastanvil = {workspace = true, optional = true}
-
-[features]
-fastanvil = ["dep:fastanvil"]
 
 [workspace]
 members = ["deepslate-converter"]
@@ -27,7 +23,6 @@ version = "0.3.0"
 edition = "2021"
 
 [workspace.dependencies]
-fastanvil = "0.31"
 anyhow = "1"
 
 [dev-dependencies]

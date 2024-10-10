@@ -6,8 +6,7 @@ edition.workspace = true
 
 [dependencies]
 clap = { version = "4", features = ["derive"]}
-fastnbt = "2.5"
 rayon = "1"
-deepslate = {path = "../", features = ["fastanvil"]}
-fastanvil.workspace = true
+deepslate = {path = "../"}
 anyhow.workspace = true
+simdnbt = "0.6.1"
