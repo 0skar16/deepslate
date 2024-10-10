@@ -26,6 +26,7 @@ I also have an implementation of this for [Valence](https://github.com/valence-r
 - [ ] Error/corruption checking (the last thing we need is a bitcode error)
 - [ ] Improve writing
 - [x] Isolate the converter from the main code
+- [ ] Use a higher speed nbt library like simdnbt for converter
 
 ## Comparison?
 
