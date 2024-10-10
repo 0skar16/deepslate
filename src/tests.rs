@@ -41,7 +41,7 @@ fn region_encode_decode() {
             }
             let mut block_data = [0; 16*16*16];
             for j in 0..16*16*16 {
-                block_data[j] = rand::random::<u64>() % palette.len() as u64;
+                block_data[j] = rand::random::<u16>() % palette.len() as u16;
             }
             sections.push(Some(Section {
                 y,

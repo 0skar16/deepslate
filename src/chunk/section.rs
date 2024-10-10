@@ -40,7 +40,7 @@ impl From<String> for BlockState {
 #[derive(Debug, Clone, PartialEq)]
 pub struct SectionBlockStates {
     pub palette: Vec<BlockState>,
-    pub block_data: [u64; 4096],
+    pub block_data: [u16; 4096],
 }
 
 #[derive(Default)]
@@ -169,10 +169,10 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
                             .into_iter()
                             .map(|q| {
                                 [
-                                    q as u64 & 0x3,
-                                    (q as u64 >> 2) & 0x3,
-                                    (q as u64 >> 4) & 0x3,
-                                    (q as u64 >> 6) & 0x3,
+                                    q as u16 & 0x3,
+                                    (q as u16 >> 2) & 0x3,
+                                    (q as u16 >> 4) & 0x3,
+                                    (q as u16 >> 6) & 0x3,
                                 ]
                             })
                             .flatten()
@@ -187,7 +187,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
                     (
                         halves_data
                             .into_iter()
-                            .map(|h| [h as u64 & 0xf, (h as u64 >> 4) & 0xf])
+                            .map(|h| [h as u16 & 0xf, (h as u16 >> 4) & 0xf])
                             .flatten()
                             .collect(),
                         palette,
@@ -197,7 +197,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
                     let data: Vec<u8> = self.data.decode();
 
                     let palette = self.palette.decode();
-                    (data.into_iter().map(|b| b as u64).collect(), palette)
+                    (data.into_iter().map(|b| b as u16).collect(), palette)
                 }
                 3u8 => {
                     let twelves_data: Vec<u8> = self.data.decode();
@@ -208,7 +208,7 @@ impl<'__de> bitcode::__private::Decoder<'__de, SectionBlockStates>
                             .chunks(3)
                             .map(|b| {
                                 let t = u32::from_be_bytes([0, b[0], b[1], b[2]]);
-                                [t as u64 & 0xfff, (t as u64 >> 12) & 0xfff]
+                                [t as u16 & 0xfff, (t as u16 >> 12) & 0xfff]
                             })
                             .flatten()
                             .collect(),
