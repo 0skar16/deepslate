@@ -1,11 +1,10 @@
 use std::{
-    collections::HashMap,
-    path::PathBuf,
-    sync::Arc,
+    collections::HashMap, io::Cursor, path::PathBuf, sync::Arc
 };
 
 use clap::Parser;
 use deepslate::{chunk::{BlockState, Chunk, Section, SectionBlockStates}, DeepslateWorld};
+use fastanvil::{RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 #[derive(Parser, Debug)]
@@ -79,7 +78,7 @@ fn main() -> anyhow::Result<()> {
                         }
                     }
 
-                    match JavaChunk::from_bytes(&chunk_data.data).expect("Couldn't decode chunk") {
+                    /*match JavaChunk::from_bytes(&chunk_data.data).expect("Couldn't decode chunk") {
                         JavaChunk::Post18(chunk) => {
                             if let Some(sections) = chunk.sections {
                                 let sections: Vec<Option<Section>> = sections
@@ -110,7 +109,7 @@ fn main() -> anyhow::Result<()> {
 
                         }
                         _ => continue,
-                    };
+                    };*/
                 }
             }
             writer.finalise().expect("Couldn't finalise a region");
@@ -122,7 +121,7 @@ fn main() -> anyhow::Result<()> {
         .finalise()?;*/
     Ok(())
 }
-pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Option<Section> {
+/*pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Option<Section> {
     let block_palette: Vec<BlockState> = section
         .block_states
         .palette()
@@ -161,4 +160,4 @@ pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Optio
         sky_light: None,
         y: section.y,
     })
-}
+}*/

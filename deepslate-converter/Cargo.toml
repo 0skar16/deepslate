@@ -10,3 +10,4 @@ rayon = "1"
 deepslate = {path = "../"}
 anyhow.workspace = true
 simdnbt = "0.6.1"
+fastanvil = "0.31"
