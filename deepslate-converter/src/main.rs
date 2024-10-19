@@ -1,9 +1,10 @@
-use std::{
-    collections::HashMap, io::Cursor, path::PathBuf, sync::Arc
-};
+pub mod chunk;
 
+use std::{io::Cursor, path::PathBuf, sync::Arc};
+
+use chunk::parse_chunk;
 use clap::Parser;
-use deepslate::{chunk::{BlockState, Chunk, Section, SectionBlockStates}, DeepslateWorld};
+use deepslate::DeepslateWorld;
 use fastanvil::{RegionFileLoader, RegionLoader};
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
@@ -52,7 +53,9 @@ fn main() -> anyhow::Result<()> {
                 .region(*region_x, *region_z)
                 .expect("Error loading region")
                 .expect("Region not found");
-            let mut writer = regions.write_region(region_x.0 as i32, region_z.0 as i32, -4, 19).expect("Couldn't write to region");
+            let mut writer = regions
+                .write_region(region_x.0 as i32, region_z.0 as i32, -4, 19)
+                .expect("Couldn't write to region");
             for chunk_data in region.iter() {
                 if let Ok(chunk_data) = chunk_data {
                     let chunk_abs_x = region_x.0 as i32 * 32 + (chunk_data.x as i32);
@@ -77,6 +80,13 @@ fn main() -> anyhow::Result<()> {
                             continue;
                         }
                     }
+
+                    let nbt = simdnbt::borrow::read(&mut Cursor::new(&chunk_data.data))
+                        .unwrap()
+                        .unwrap();
+                    let (_, chunk) = parse_chunk(nbt.as_compound()).unwrap();
+
+                    writer.insert_chunk((chunk_data.x as u32, chunk_data.z as u32), chunk).unwrap();
 
                     /*match JavaChunk::from_bytes(&chunk_data.data).expect("Couldn't decode chunk") {
                         JavaChunk::Post18(chunk) => {
@@ -113,12 +123,11 @@ fn main() -> anyhow::Result<()> {
                 }
             }
             writer.finalise().expect("Couldn't finalise a region");
-            
         });
     /*writer_rw
-        .write()
-        .expect("Couldn't lock writer")
-        .finalise()?;*/
+    .write()
+    .expect("Couldn't lock writer")
+    .finalise()?;*/
     Ok(())
 }
 /*pub fn anvil_section_to_deepslate_section(section: &fastanvil::Section) -> Option<Section> {
