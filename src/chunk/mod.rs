@@ -1,8 +1,10 @@
 mod section;
+mod block;
 use std::collections::HashMap;
 
 use bitcode::{Decode, Encode};
 pub use section::*;
+pub use block::*;
 
 #[derive(Clone, PartialEq, Debug, Encode, Decode, Default, Copy)]
 pub struct ChunkEntry {

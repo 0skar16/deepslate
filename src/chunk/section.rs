@@ -4,6 +4,8 @@ use bitcode::{Decode, Encode};
 
 use crate::{static_enums::Biome, PropName, PropValue};
 
+use super::BlockState;
+
 #[derive(Debug, Encode, Decode, Clone, PartialEq)]
 pub struct Section {
     pub y: i8,
@@ -12,30 +14,7 @@ pub struct Section {
     pub block_light: Option<Vec<u8>>,
     pub sky_light: Option<Vec<u8>>,
 }
-#[derive(Debug, Encode, Decode, Clone, PartialEq)]
-pub struct BlockState {
-    pub block: String,
-    pub properties: HashMap<PropName, PropValue>,
-}
 
-impl From<String> for BlockState {
-    fn from(value: String) -> Self {
-        let (block, s_state) = value.split_once("|").expect("Couldn't split blockstateid");
-        let mut properties = HashMap::new();
-        for prop in s_state.to_string().split(",") {
-            let prop = prop.to_string();
-            if prop.len() == 0 {
-                continue;
-            }
-            let (name, value) = prop.split_once("=").expect("Couldn't split prop");
-            properties.insert(
-                PropName::from_str(name),
-                PropValue::from_str(value),
-            );
-        }
-        Self { block: block.to_string(), properties }
-    }
-}
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct SectionBlockStates {
