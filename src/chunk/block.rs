@@ -28,3 +28,21 @@ impl From<String> for BlockState {
         Self { block: block.to_string(), properties }
     }
 }
+
+impl BlockState {
+    pub fn new(block: impl ToString) -> Self {
+        Self {
+            block: block.to_string(),
+            properties: HashMap::new(),
+        }
+    }
+    pub fn set(&mut self, name: PropName, val: PropValue) -> Option<PropValue> {
+        self.properties.insert(name, val)
+    }
+    pub fn get(&mut self, name: PropName) -> Option<&PropValue> {
+        self.properties.get(&name)
+    }
+    pub fn remove(&mut self, name: PropName) -> Option<PropValue> {
+        self.properties.remove(&name)
+    }
+}
