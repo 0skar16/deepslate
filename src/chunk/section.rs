@@ -90,7 +90,7 @@ impl bitcode::__private::Encoder<SectionBlockStates> for SectionBlockStatesEncod
                 t.block_data
                     .chunks(2)
                     .map(|b| {
-                        let [_, o3, o2, o1] = (((b[0]) | (b[1]) << 12) as u32).to_be_bytes();
+                        let [_, o3, o2, o1] = (((b[0]  as u32) | (b[1]  as u32) << 12)).to_be_bytes();
                         [o3, o2, o1]
                     })
                     .flatten()
